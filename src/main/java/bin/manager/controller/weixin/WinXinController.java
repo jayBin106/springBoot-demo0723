@@ -1,10 +1,12 @@
 package bin.manager.controller.weixin;
 
-import bin.manager.common.winxin.*;
+import bin.manager.common.winxin.AesException;
+import bin.manager.common.winxin.SHA1;
 import bin.manager.common.winxin.messagePoJo.ImageMessage;
 import bin.manager.common.winxin.messagePoJo.MusicMessage;
 import bin.manager.common.winxin.messagePoJo.NewsMessage;
 import bin.manager.common.winxin.messagePoJo.TextMessage;
+import bin.manager.common.winxin.util.InitMenu;
 import bin.manager.common.winxin.util.MessageUtil;
 import bin.manager.common.winxin.util.WinXinUploadUtil;
 import bin.manager.common.winxin.util.WinXinUtil;
@@ -95,8 +97,13 @@ public class WinXinController {
             case MessageUtil.MESSAGE_TEXT:
                 switch (textMessage.getContent()) {
                     case "1":
-                        content = "唐素芳别闹";
-                        break;
+                        //菜单创建
+                        int menu = InitMenu.createMenu(access_token + "");
+                        if (menu == 0) {
+                            return "菜单创建成功";
+                        } else {
+                            return "菜单创建失败";
+                        }
                     case "2":
                         MusicMessage musicMessage = new MusicMessage("jay", "无与伦比，为杰沉沦", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", media_id + "");
                         TextMessage textMessage2 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_MUSIC, musicMessage);
