@@ -1,4 +1,4 @@
-package bin.manager.common.winxin;
+package bin.manager.common.winxin.messagePoJo;
 
 /**
  * Created by lenovo on 2018/10/10.

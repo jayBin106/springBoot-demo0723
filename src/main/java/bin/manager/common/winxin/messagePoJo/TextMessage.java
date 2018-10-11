@@ -1,4 +1,4 @@
-package bin.manager.common.winxin;
+package bin.manager.common.winxin.messagePoJo;
 
 import java.util.List;
 
@@ -16,6 +16,8 @@ public class TextMessage {
     private String EventKey;
     private int ArticleCount;
     private List<NewsMessage> Articles;
+    private ImageMessage Image;
+    private MusicMessage Music;
 
     public TextMessage() {
     }
@@ -27,6 +29,7 @@ public class TextMessage {
         MsgType = msgType;
         Content = content;
     }
+
     public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, String content, String msgId) {
         ToUserName = toUserName;
         FromUserName = fromUserName;
@@ -43,6 +46,22 @@ public class TextMessage {
         MsgType = msgType;
         ArticleCount = articleCount;
         Articles = articles;
+    }
+
+    public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, ImageMessage image) {
+        ToUserName = toUserName;
+        FromUserName = fromUserName;
+        CreateTime = createTime;
+        MsgType = msgType;
+        Image = image;
+    }
+
+    public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, MusicMessage musicMessage) {
+        ToUserName = toUserName;
+        FromUserName = fromUserName;
+        CreateTime = createTime;
+        MsgType = msgType;
+        Music = musicMessage;
     }
 
     public String getToUserName() {
@@ -123,6 +142,22 @@ public class TextMessage {
 
     public void setArticles(List<NewsMessage> articles) {
         Articles = articles;
+    }
+
+    public ImageMessage getImage() {
+        return Image;
+    }
+
+    public void setImage(ImageMessage image) {
+        Image = image;
+    }
+
+    public MusicMessage getMusic() {
+        return Music;
+    }
+
+    public void setMusic(MusicMessage music) {
+        Music = music;
     }
 
     @Override

@@ -1,6 +1,14 @@
 package bin.manager.controller.weixin;
 
 import bin.manager.common.winxin.*;
+import bin.manager.common.winxin.messagePoJo.ImageMessage;
+import bin.manager.common.winxin.messagePoJo.MusicMessage;
+import bin.manager.common.winxin.messagePoJo.NewsMessage;
+import bin.manager.common.winxin.messagePoJo.TextMessage;
+import bin.manager.common.winxin.util.MessageUtil;
+import bin.manager.common.winxin.util.WinXinUploadUtil;
+import bin.manager.common.winxin.util.WinXinUtil;
+import com.alibaba.fastjson.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
@@ -25,8 +33,7 @@ import java.util.Date;
 @RequestMapping("/weixin")
 public class WinXinController {
     private final static String token = "imooc";
-    String appId = "wx64455f9536235f5d";
-    String EncodingAESKey = "cfcVbGFRER2K5lB4LdTXuCPb03qVm5NK03ifWDDyEcX";
+
 
     @GetMapping("/get")
     public String get(String signature, String msg_signature, String timestamp, String nonce, String echostr) throws AesException {
@@ -79,6 +86,11 @@ public class WinXinController {
 
     private String fanhuiMessage(TextMessage textMessage) {
         String content = "";
+        JSONObject jsonObject = WinXinUtil.doGetStr(WinXinUtil.URL);
+        Object access_token = jsonObject.get("access_token");
+        String s = WinXinUploadUtil.uploadFile(WinXinUtil.UPLOAD_URL, access_token + "", MessageUtil.MESSAGE_IMAGE, WinXinUtil.SERVICE_URL + "/static/images/logo.png");
+        JSONObject jsonObject1 = JSONObject.parseObject(s);
+        Object media_id = jsonObject1.get("media_id");
         switch (textMessage.getMsgType()) {
             case MessageUtil.MESSAGE_TEXT:
                 switch (textMessage.getContent()) {
@@ -86,14 +98,17 @@ public class WinXinController {
                         content = "唐素芳别闹";
                         break;
                     case "2":
-                        content = "周二";
-                        break;
+                        MusicMessage musicMessage = new MusicMessage("jay", "无与伦比，为杰沉沦", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", media_id + "");
+                        TextMessage textMessage2 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_MUSIC, musicMessage);
+                        String objectToXml2 = MessageUtil.ObjectToXml(textMessage2);
+                        return objectToXml2;
                     case "3":
-                        content = "周三";
-                        break;
+                        TextMessage textMessage3 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_IMAGE, new ImageMessage(media_id + ""));
+                        String objectToXml3 = MessageUtil.ObjectToXml(textMessage3);
+                        return objectToXml3;
                     case "4":
                         ArrayList<NewsMessage> messages = new ArrayList<>();
-                        NewsMessage newsMessage = new NewsMessage("图文标题", "图文描述", "http://uq4zxq.natappfree.cc/static/images/logo.png", "www.baidu.com");
+                        NewsMessage newsMessage = new NewsMessage("图文标题", "图文描述", WinXinUtil.SERVICE_URL + "/static/images/logo.png", "www.baidu.com");
                         messages.add(newsMessage);
                         TextMessage textMessage1 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_NEWS, 1, messages);
                         String objectToXml = MessageUtil.ObjectToXml(textMessage1);

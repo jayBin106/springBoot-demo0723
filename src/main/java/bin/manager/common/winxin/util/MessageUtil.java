@@ -1,5 +1,6 @@
-package bin.manager.common.winxin;
+package bin.manager.common.winxin.util;
 
+import bin.manager.common.winxin.messagePoJo.NewsMessage;
 import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -15,6 +16,8 @@ public class MessageUtil {
     public static final String MESSAGE_TEXT = "text";
     public static final String MESSAGE_NEWS = "news";
     public static final String MESSAGE_IMAGE = "image";
+    public static final String MESSAGE_MUSIC = "music";
+    public static final String MESSAGE_THUMB = "thumb";
     public static final String MESSAGE_VOICE = "voice";
     public static final String MESSAGE_VIDEO = "video";
     public static final String MESSAGE_LINK = "link";

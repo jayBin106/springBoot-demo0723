@@ -1,4 +1,4 @@
-package bin.manager.common.winxin;
+package bin.manager.common.winxin.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
