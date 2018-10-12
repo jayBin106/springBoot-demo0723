@@ -1,63 +1,41 @@
 package bin.manager.common.winxin.messagePoJo;
 
+import java.util.List;
+
 /**
- * Created by lenovo on 2018/10/10.
+ * Created by lenovo on 2018/10/12.
  */
-public class NewsMessage {
-    private String Title;
-    private String Description;
-    private String PicUrl;
-    private String Url;
+public class NewsMessage extends Message {
+    private int ArticleCount;
+    private List<News> Articles;
 
     public NewsMessage() {
     }
 
-    public NewsMessage(String title, String description, String picUrl, String url) {
-        Title = title;
-        Description = description;
-        PicUrl = picUrl;
-        Url = url;
+    public NewsMessage(int articleCount, List<News> articles) {
+        ArticleCount = articleCount;
+        Articles = articles;
     }
 
-    @Override
-    public String toString() {
-        return "NewsMessage{" +
-                "Title='" + Title + '\'' +
-                ", Description='" + Description + '\'' +
-                ", PicUrl='" + PicUrl + '\'' +
-                ", Url='" + Url + '\'' +
-                '}';
+    public NewsMessage(String toUserName, String fromUserName, String createTime, String msgType, int articleCount, List<News> articles) {
+        super(toUserName, fromUserName, createTime, msgType);
+        ArticleCount = articleCount;
+        Articles = articles;
     }
 
-    public String getTitle() {
-        return Title;
+    public int getArticleCount() {
+        return ArticleCount;
     }
 
-    public void setTitle(String title) {
-        Title = title;
+    public void setArticleCount(int articleCount) {
+        ArticleCount = articleCount;
     }
 
-    public String getDescription() {
-        return Description;
+    public List<News> getArticles() {
+        return Articles;
     }
 
-    public void setDescription(String description) {
-        Description = description;
-    }
-
-    public String getPicUrl() {
-        return PicUrl;
-    }
-
-    public void setPicUrl(String picUrl) {
-        PicUrl = picUrl;
-    }
-
-    public String getUrl() {
-        return Url;
-    }
-
-    public void setUrl(String url) {
-        Url = url;
+    public void setArticles(List<News> articles) {
+        Articles = articles;
     }
 }

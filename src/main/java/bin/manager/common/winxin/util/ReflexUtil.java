@@ -38,7 +38,19 @@ public class ReflexUtil {
     public static Method getSetMethod(Class objectClass, String fieldName) {
         try {
             Class[] parameterTypes = new Class[1];
-            Field field = objectClass.getDeclaredField(fieldName);
+            Field field = null;
+            boolean bl = false;
+            try {
+                field = objectClass.getDeclaredField(fieldName);
+            } catch (Exception ex) {
+//                ex.printStackTrace();
+                bl = true;
+            }
+            if (bl) {
+                //向上转型，找到父类属性
+                objectClass = objectClass.getSuperclass();
+                field = objectClass.getDeclaredField(fieldName);
+            }
             parameterTypes[0] = field.getType();
             StringBuffer sb = new StringBuffer();
             sb.append("set");
@@ -62,7 +74,9 @@ public class ReflexUtil {
     public static void invokeSet(Object o, String fieldName, Object value) {
         Method method = getSetMethod(o.getClass(), fieldName);
         try {
-            method.invoke(o, new Object[]{value});
+            if (method != null) {
+                method.invoke(o, new Object[]{value});
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,7 +91,11 @@ public class ReflexUtil {
     public static Object invokeGet(Object o, String fieldName) {
         Method method = getGetMethod(o.getClass(), fieldName);
         try {
-            return method.invoke(o, new Object[0]);
+            if (method != null) {
+                return method.invoke(o, new Object[0]);
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

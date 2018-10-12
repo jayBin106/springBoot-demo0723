@@ -1,99 +1,21 @@
 package bin.manager.common.winxin.messagePoJo;
 
-import java.util.List;
-
 /**
- * Created by lenovo on 2018/10/10.
+ * Created by lenovo on 2018/10/12.
  */
-public class TextMessage {
-    private String ToUserName;
-    private String FromUserName;
-    private String CreateTime;
-    private String MsgType;
+public class TextMessage extends Message {
     private String Content;
-    private String MsgId;
-    private String Event;
-    private String EventKey;
-    private int ArticleCount;
-    private List<NewsMessage> Articles;
-    private ImageMessage Image;
-    private MusicMessage Music;
 
     public TextMessage() {
     }
 
+    public TextMessage(String content) {
+        Content = content;
+    }
+
     public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, String content) {
-        ToUserName = toUserName;
-        FromUserName = fromUserName;
-        CreateTime = createTime;
-        MsgType = msgType;
+        super(toUserName, fromUserName, createTime, msgType);
         Content = content;
-    }
-
-    public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, String content, String msgId) {
-        ToUserName = toUserName;
-        FromUserName = fromUserName;
-        CreateTime = createTime;
-        MsgType = msgType;
-        Content = content;
-        MsgId = msgId;
-    }
-
-    public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, int articleCount, List<NewsMessage> articles) {
-        ToUserName = toUserName;
-        FromUserName = fromUserName;
-        CreateTime = createTime;
-        MsgType = msgType;
-        ArticleCount = articleCount;
-        Articles = articles;
-    }
-
-    public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, ImageMessage image) {
-        ToUserName = toUserName;
-        FromUserName = fromUserName;
-        CreateTime = createTime;
-        MsgType = msgType;
-        Image = image;
-    }
-
-    public TextMessage(String toUserName, String fromUserName, String createTime, String msgType, MusicMessage musicMessage) {
-        ToUserName = toUserName;
-        FromUserName = fromUserName;
-        CreateTime = createTime;
-        MsgType = msgType;
-        Music = musicMessage;
-    }
-
-    public String getToUserName() {
-        return ToUserName;
-    }
-
-    public void setToUserName(String toUserName) {
-        ToUserName = toUserName;
-    }
-
-    public String getFromUserName() {
-        return FromUserName;
-    }
-
-    public void setFromUserName(String fromUserName) {
-        FromUserName = fromUserName;
-    }
-
-    public String getCreateTime() {
-        return CreateTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        CreateTime = createTime;
-    }
-
-    public String getMsgType() {
-        return MsgType;
-    }
-
-    public void setMsgType(String msgType) {
-        MsgType = msgType;
     }
 
     public String getContent() {
@@ -102,75 +24,5 @@ public class TextMessage {
 
     public void setContent(String content) {
         Content = content;
-    }
-
-    public String getMsgId() {
-        return MsgId;
-    }
-
-    public void setMsgId(String msgId) {
-        MsgId = msgId;
-    }
-
-    public String getEvent() {
-        return Event;
-    }
-
-    public void setEvent(String event) {
-        Event = event;
-    }
-
-    public String getEventKey() {
-        return EventKey;
-    }
-
-    public void setEventKey(String eventKey) {
-        EventKey = eventKey;
-    }
-
-    public int getArticleCount() {
-        return ArticleCount;
-    }
-
-    public void setArticleCount(int articleCount) {
-        ArticleCount = articleCount;
-    }
-
-    public List<NewsMessage> getArticles() {
-        return Articles;
-    }
-
-    public void setArticles(List<NewsMessage> articles) {
-        Articles = articles;
-    }
-
-    public ImageMessage getImage() {
-        return Image;
-    }
-
-    public void setImage(ImageMessage image) {
-        Image = image;
-    }
-
-    public MusicMessage getMusic() {
-        return Music;
-    }
-
-    public void setMusic(MusicMessage music) {
-        Music = music;
-    }
-
-    @Override
-    public String toString() {
-        return "TextMessage{" +
-                "ToUserName='" + ToUserName + '\'' +
-                ", FromUserName='" + FromUserName + '\'' +
-                ", CreateTime='" + CreateTime + '\'' +
-                ", MsgType='" + MsgType + '\'' +
-                ", Content='" + Content + '\'' +
-                ", MsgId='" + MsgId + '\'' +
-                ", Event='" + Event + '\'' +
-                ", EventKey='" + EventKey + '\'' +
-                '}';
     }
 }

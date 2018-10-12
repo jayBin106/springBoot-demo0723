@@ -2,7 +2,7 @@ package bin.manager.common.winxin.util;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -25,6 +25,8 @@ public class WinXinUtil {
     public static final String UPLOAD_URL = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
     //自定义菜单
     public static final String MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
+    //查询菜单
+    public static final String QUERY_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN";
 
     /**
      * get请求
@@ -33,10 +35,10 @@ public class WinXinUtil {
      * @return
      */
     public static JSONObject doGetStr(String url) {
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+        DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpGet httpGet = new HttpGet(url);
         try {
-            CloseableHttpResponse execute = defaultHttpClient.execute(httpGet);
+           HttpResponse execute = httpClient.execute(httpGet);
             HttpEntity entity = execute.getEntity();
             if (entity != null) {
                 String string = EntityUtils.toString(entity, "utf-8");
@@ -55,12 +57,12 @@ public class WinXinUtil {
      * @param url
      * @return
      */
-    public static JSONObject doPostStr(String url,String outStr) {
-        DefaultHttpClient defaultHttpClient = new DefaultHttpClient();
+    public static   JSONObject doPostStr(String url,String outStr) {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new StringEntity(outStr,"UTF-8"));
         try {
-            CloseableHttpResponse execute = defaultHttpClient.execute(httpPost);
+            HttpResponse execute = httpClient.execute(httpPost);
             HttpEntity entity = execute.getEntity();
             if (entity != null) {
                 String string = EntityUtils.toString(entity, "utf-8");

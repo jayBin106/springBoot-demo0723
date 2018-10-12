@@ -13,7 +13,8 @@ import com.alibaba.fastjson.JSONObject;
 public class InitMenu {
     public static String init() {
         ClickButton clickButton = new ClickButton("click菜单", "click", null, "1");
-        ViewButton clickButton2 = new ViewButton("view菜单", "view", null, "www.baidu.com");
+        //url地址，必须要加上http://
+        ViewButton clickButton2 = new ViewButton("view菜单", "view", null, "http://www.baidu.com/");
         ClickButton clickButton3 = new ClickButton("拍照", "pic_sysphoto", null, "2");
         ClickButton clickButton4 = new ClickButton("地理位置", "location_select", null, "3");
         ClickButton clickButton5 = new ClickButton("扫码", "scancode_waitmsg", null, "4");
@@ -42,5 +43,21 @@ public class InitMenu {
             return errcode;
         }
         return 1;
+    }
+
+    /**
+     * 查询 菜单
+     *
+     * @param token
+     * @return
+     */
+    public static String query_menu_url(String token) {
+        String menuUrl = WinXinUtil.QUERY_MENU_URL.replace("ACCESS_TOKEN", token);
+        JSONObject jsonObject = WinXinUtil.doGetStr(menuUrl);
+        if (jsonObject != null) {
+            String string = JSONObject.toJSONString(jsonObject);
+            return string;
+        }
+        return "";
     }
 }

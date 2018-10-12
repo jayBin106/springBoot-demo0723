@@ -45,5 +45,21 @@ public class ErrorExceptionHandler {
         m.setViewName("error/500");
         return m;
     }
+    /**
+     * 统一异常处理
+     *
+     * @param exception exception
+     * @return
+     */
+    @ExceptionHandler({NoSuchFieldException.class})
+    @ResponseStatus(HttpStatus.OK)
+    public ModelAndView processException(NoSuchFieldException exception) {
+        logger.info("找不到属性-Exception");
+        logger.info(exception.getLocalizedMessage());
+        ModelAndView m = new ModelAndView();
+        m.addObject("NoSuchFieldException", exception.getMessage());
+        m.setViewName("error/500");
+        return m;
+    }
 
 }

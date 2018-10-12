@@ -2,10 +2,7 @@ package bin.manager.controller.weixin;
 
 import bin.manager.common.winxin.AesException;
 import bin.manager.common.winxin.SHA1;
-import bin.manager.common.winxin.messagePoJo.ImageMessage;
-import bin.manager.common.winxin.messagePoJo.MusicMessage;
-import bin.manager.common.winxin.messagePoJo.NewsMessage;
-import bin.manager.common.winxin.messagePoJo.TextMessage;
+import bin.manager.common.winxin.messagePoJo.*;
 import bin.manager.common.winxin.util.InitMenu;
 import bin.manager.common.winxin.util.MessageUtil;
 import bin.manager.common.winxin.util.WinXinUploadUtil;
@@ -26,6 +23,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 
 /**
@@ -67,11 +65,15 @@ public class WinXinController {
 //        String xmlStr = wxBizMsgCrypt.decrypt(extract[1].toString());
 
         System.out.println("解密后明文xml: " + xmlStr);
-        TextMessage textMessage = new TextMessage();
-        MessageUtil.xmlToObject(textMessage, xmlStr);
+        TextMessage message = new TextMessage();
+        //xml转换为对象，适用于不变的xml
+//        MessageUtil.xmlToObject(message, xmlStr);
+        MessageUtil.xmlToMap(xmlStr);
+
         //接收到用户信息判断类似并返回信息
-        String fanhuiMessage = fanhuiMessage(textMessage);
-        System.out.println("返回的xml" + fanhuiMessage);
+        String fanhuiMessage = fanhuiMessage(MessageUtil.map);
+        System.out.println("返回的map：" + JSONObject.toJSONString(MessageUtil.map));
+        System.out.println("返回的xml：" + fanhuiMessage);
         PrintWriter outputStream = response.getWriter();
         outputStream.print(fanhuiMessage);
         outputStream.flush();
@@ -82,20 +84,24 @@ public class WinXinController {
 
     /**
      * 接收到用户信息判断类似并返回信息
-     *
-     * @param textMessage
      */
 
-    private String fanhuiMessage(TextMessage textMessage) {
+    private String fanhuiMessage(Map<String, Object> objectMap) {
         String content = "";
         JSONObject jsonObject = WinXinUtil.doGetStr(WinXinUtil.URL);
         Object access_token = jsonObject.get("access_token");
         String s = WinXinUploadUtil.uploadFile(WinXinUtil.UPLOAD_URL, access_token + "", MessageUtil.MESSAGE_IMAGE, WinXinUtil.SERVICE_URL + "/static/images/logo.png");
         JSONObject jsonObject1 = JSONObject.parseObject(s);
         Object media_id = jsonObject1.get("media_id");
-        switch (textMessage.getMsgType()) {
+
+        //从map中 获取值
+        String toUserName = objectMap.get("ToUserName").toString();
+        String FromUserName = objectMap.get("FromUserName").toString();
+        String MsgType = objectMap.get("MsgType").toString();
+
+        switch (MsgType) {
             case MessageUtil.MESSAGE_TEXT:
-                switch (textMessage.getContent()) {
+                switch (objectMap.get("Content").toString()) {
                     case "1":
                         //菜单创建
                         int menu = InitMenu.createMenu(access_token + "");
@@ -105,40 +111,64 @@ public class WinXinController {
                             return "菜单创建失败";
                         }
                     case "2":
-                        MusicMessage musicMessage = new MusicMessage("jay", "无与伦比，为杰沉沦", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", media_id + "");
-                        TextMessage textMessage2 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_MUSIC, musicMessage);
-                        String objectToXml2 = MessageUtil.ObjectToXml(textMessage2);
+                        Music music = new Music("jay", "无与伦比，为杰沉沦", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", media_id + "");
+                        MusicMessage message2 = new MusicMessage(FromUserName, toUserName, new Date().getTime() + "", MessageUtil.MESSAGE_MUSIC, music);
+                        String objectToXml2 = MessageUtil.ObjectToXml(message2);
                         return objectToXml2;
                     case "3":
-                        TextMessage textMessage3 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_IMAGE, new ImageMessage(media_id + ""));
-                        String objectToXml3 = MessageUtil.ObjectToXml(textMessage3);
+                        ImageMessage message3 = new ImageMessage(FromUserName, toUserName, new Date().getTime() + "", MessageUtil.MESSAGE_IMAGE, new Image(media_id + ""));
+                        String objectToXml3 = MessageUtil.ObjectToXml(message3);
                         return objectToXml3;
                     case "4":
-                        ArrayList<NewsMessage> messages = new ArrayList<>();
-                        NewsMessage newsMessage = new NewsMessage("图文标题", "图文描述", WinXinUtil.SERVICE_URL + "/static/images/logo.png", "www.baidu.com");
-                        messages.add(newsMessage);
-                        TextMessage textMessage1 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", MessageUtil.MESSAGE_NEWS, 1, messages);
-                        String objectToXml = MessageUtil.ObjectToXml(textMessage1);
+                        ArrayList<News> messages = new ArrayList<>();
+                        News news = new News("图文标题", "图文描述", WinXinUtil.SERVICE_URL + "/static/images/logo.png", "www.baidu.com");
+                        messages.add(news);
+                        NewsMessage message1 = new NewsMessage(FromUserName, toUserName, new Date().getTime() + "", MessageUtil.MESSAGE_NEWS, 1, messages);
+                        String objectToXml = MessageUtil.ObjectToXml(message1);
                         System.out.println(objectToXml);
                         return objectToXml;
+                    case "5":
+                        String s1 = InitMenu.query_menu_url(access_token.toString());
+                        content = s1;
+                        break;
                     default:
                         content = "别闹！！";
                         break;
                 }
                 break;
             case MessageUtil.MESSAGE_EVENT:
-                switch (textMessage.getEvent()) {
+                switch (objectMap.get("Event").toString()) {
                     case MessageUtil.MESSAGE_SUBSCRIBE:
                         content = "谢谢您的关注！！";
                         break;
                     case MessageUtil.MESSAGE_UNSUBSCRIBE:
                         content = "欢迎下次关注！！";
                         break;
+                    case MessageUtil.MESSAGE_CLICK:
+                        content = "点击click菜单";
+                        break;
+                    case MessageUtil.MESSAGE_SCANCODE_PUSH:
+                        content = "扫码推送";
+                        break;
+                    case MessageUtil.MESSAGE_SSCANCODE_WAITMSG:
+                        content = objectMap.get("ScanResult").toString();
+                        break;
+                    case MessageUtil.MESSAGE_LOCATION_SELECT:
+                        content = objectMap.get("Label").toString();
+                        break;
+                }
+                break;
+            case MessageUtil.MESSAGE_IMAGE:
+                switch (objectMap.get("Event").toString()) {
+                    case MessageUtil.MESSAGE_PIC_SYSPHOTO:
+                        content = "PicMd5Sum：" + objectMap.get("PicMd5Sum").toString() + "  PicUrl：" + objectMap.get("PicUrl").toString();
+                        break;
                 }
                 break;
         }
-        TextMessage textMessage1 = new TextMessage(textMessage.getFromUserName(), textMessage.getToUserName(), new Date().getTime() + "", "text", content);
-        String objectToXml = MessageUtil.ObjectToXml(textMessage1);
+        System.out.println("content------" + content);
+        TextMessage message1 = new TextMessage(FromUserName, toUserName, new Date().getTime() + "", "text", content);
+        String objectToXml = MessageUtil.ObjectToXml(message1);
         return objectToXml;
     }
 }
