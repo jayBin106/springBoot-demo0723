@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
+import static bin.manager.common.winxin.util.WinXinUtil.doGetStr;
+
 
 /**
  * Created by lenovo on 2018/10/9.
@@ -32,6 +35,17 @@ import java.util.Map;
 @RestController
 @RequestMapping("/weixin")
 public class WinXinController {
+    @Value("${SERVICE_URL}")
+    String SERVICE_URL;
+    @Value("${UPLOAD_URL}")
+    String UPLOAD_URL;
+    @Value("${URL}")
+    String URL;
+    @Value("${MENU_URL}")
+    String MENU_URL;
+    @Value("${QUERY_MENU_URL}")
+    String QUERY_MENU_URL;
+
     private final static String token = "imooc";
 
 
@@ -87,10 +101,11 @@ public class WinXinController {
      */
 
     private String fanhuiMessage(Map<String, Object> objectMap) {
+        InitMenu initMenu = new InitMenu();
         String content = "";
-        JSONObject jsonObject = WinXinUtil.doGetStr(WinXinUtil.URL);
+        JSONObject jsonObject = doGetStr(URL);
         Object access_token = jsonObject.get("access_token");
-        String s = WinXinUploadUtil.uploadFile(WinXinUtil.UPLOAD_URL, access_token + "", MessageUtil.MESSAGE_IMAGE, WinXinUtil.SERVICE_URL + "/static/images/logo.png");
+        String s = WinXinUploadUtil.uploadFile(UPLOAD_URL, access_token + "", MessageUtil.MESSAGE_IMAGE, SERVICE_URL + "/static/images/logo.png");
         JSONObject jsonObject1 = JSONObject.parseObject(s);
         Object media_id = jsonObject1.get("media_id");
 
@@ -104,31 +119,31 @@ public class WinXinController {
                 switch (objectMap.get("Content").toString()) {
                     case "1":
                         //菜单创建
-                        int menu = InitMenu.createMenu(access_token + "");
+                        int menu = initMenu.createMenu(MENU_URL, access_token + "");
                         if (menu == 0) {
                             return "菜单创建成功";
                         } else {
                             return "菜单创建失败";
                         }
                     case "2":
-                        Music music = new Music("jay", "无与伦比，为杰沉沦", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", WinXinUtil.SERVICE_URL + "/static/music/123.mp3", media_id + "");
-                        MusicMessage message2 = new MusicMessage(FromUserName, toUserName, new Date().getTime() + "", MessageUtil.MESSAGE_MUSIC, music);
+                        Music music = new Music("jay", "无与伦比，为杰沉沦", SERVICE_URL + "/static/music/123.mp3", SERVICE_URL + "/static/music/123.mp3", media_id + "");
+                        MusicMessage message2 = new MusicMessage(FromUserName, toUserName, System.currentTimeMillis() + "", MessageUtil.MESSAGE_MUSIC, music);
                         String objectToXml2 = MessageUtil.ObjectToXml(message2);
                         return objectToXml2;
                     case "3":
-                        ImageMessage message3 = new ImageMessage(FromUserName, toUserName, new Date().getTime() + "", MessageUtil.MESSAGE_IMAGE, new Image(media_id + ""));
+                        ImageMessage message3 = new ImageMessage(FromUserName, toUserName, System.currentTimeMillis() + "", MessageUtil.MESSAGE_IMAGE, new Image(media_id + ""));
                         String objectToXml3 = MessageUtil.ObjectToXml(message3);
                         return objectToXml3;
                     case "4":
                         ArrayList<News> messages = new ArrayList<>();
-                        News news = new News("图文标题", "图文描述", WinXinUtil.SERVICE_URL + "/static/images/logo.png", "www.baidu.com");
+                        News news = new News("图文标题", "图文描述", SERVICE_URL + "/static/images/logo.png", "www.baidu.com");
                         messages.add(news);
-                        NewsMessage message1 = new NewsMessage(FromUserName, toUserName, new Date().getTime() + "", MessageUtil.MESSAGE_NEWS, 1, messages);
+                        NewsMessage message1 = new NewsMessage(FromUserName, toUserName, System.currentTimeMillis() + "", MessageUtil.MESSAGE_NEWS, 1, messages);
                         String objectToXml = MessageUtil.ObjectToXml(message1);
                         System.out.println(objectToXml);
                         return objectToXml;
                     case "5":
-                        String s1 = InitMenu.query_menu_url(access_token.toString());
+                        String s1 = initMenu.query_menu_url(QUERY_MENU_URL, access_token.toString());
                         content = s1;
                         break;
                     default:
@@ -167,7 +182,7 @@ public class WinXinController {
                 break;
         }
         System.out.println("content------" + content);
-        TextMessage message1 = new TextMessage(FromUserName, toUserName, new Date().getTime() + "", "text", content);
+        TextMessage message1 = new TextMessage(FromUserName, toUserName, System.currentTimeMillis() + "", "text", content);
         String objectToXml = MessageUtil.ObjectToXml(message1);
         return objectToXml;
     }

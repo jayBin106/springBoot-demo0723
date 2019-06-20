@@ -5,12 +5,19 @@ import bin.manager.common.winxin.buttonPoJo.ClickButton;
 import bin.manager.common.winxin.buttonPoJo.Menu;
 import bin.manager.common.winxin.buttonPoJo.ViewButton;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import static bin.manager.common.winxin.util.WinXinUtil.doGetStr;
+import static bin.manager.common.winxin.util.WinXinUtil.doPostStr;
 
 /**
  * 菜单初始化
  * Created by lenovo on 2018/10/11.
  */
+@Component
 public class InitMenu {
+
     public static String init() {
         ClickButton clickButton = new ClickButton("click菜单", "click", null, "1");
         //url地址，必须要加上http://
@@ -35,9 +42,9 @@ public class InitMenu {
      * @param token
      * @return
      */
-    public static int createMenu(String token) {
-        String menuUrl = WinXinUtil.MENU_URL.replace("ACCESS_TOKEN", token);
-        JSONObject jsonObject = WinXinUtil.doPostStr(menuUrl, init());
+    public int createMenu(String menu_url,String token) {
+        String menuUrl = menu_url.replace("ACCESS_TOKEN", token);
+        JSONObject jsonObject = doPostStr(menuUrl, init());
         if (jsonObject != null) {
             int errcode = jsonObject.getIntValue("errcode");
             return errcode;
@@ -51,9 +58,9 @@ public class InitMenu {
      * @param token
      * @return
      */
-    public static String query_menu_url(String token) {
-        String menuUrl = WinXinUtil.QUERY_MENU_URL.replace("ACCESS_TOKEN", token);
-        JSONObject jsonObject = WinXinUtil.doGetStr(menuUrl);
+    public String query_menu_url(String query_menu_url,String token) {
+        String menuUrl = query_menu_url.replace("ACCESS_TOKEN", token);
+        JSONObject jsonObject = doGetStr(menuUrl);
         if (jsonObject != null) {
             String string = JSONObject.toJSONString(jsonObject);
             return string;
